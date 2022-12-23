@@ -52,12 +52,13 @@ class ResilientServiceApplicationTests {
 	}
 
 	@Test
-	void shouldRetryOnErrorAndFetchSuccessResponse() {
+	void shouldARetryOnErrorAndFetchSuccessResponse() {
 		testClient = WebTestClient
 				.bindToApplicationContext(context)
 				.configureClient().responseTimeout(Duration.ofSeconds(60))
 				.build();
 
+		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("{\"message\": \"success\"}").setResponseCode(200));
 
@@ -74,12 +75,13 @@ class ResilientServiceApplicationTests {
 	}
 
 	@Test
-	void shouldRetryOnErrorAndBreakCircuitResponse() {
+	void shouldBRetryOnErrorAndBreakCircuitResponse() {
 		testClient = WebTestClient
 				.bindToApplicationContext(context)
 				.configureClient().responseTimeout(Duration.ofSeconds(60))
 				.build();
 
+		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("{\"message\": \"success\"}").setResponseCode(200));
@@ -101,12 +103,13 @@ class ResilientServiceApplicationTests {
 	}
 
 	@Test
-	void shouldRetryAndFailAndBreakCloseTheCircuitTest() {
+	void shouldCRetryAndFailAndBreakCloseTheCircuitTest() {
 		testClient = WebTestClient
 				.bindToApplicationContext(context)
 				.configureClient().responseTimeout(Duration.ofSeconds(60))
 				.build();
 
+		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));
 		mockBackEnd.enqueue(new MockResponse().setBody("ERROR").setResponseCode(500));

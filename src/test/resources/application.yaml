@@ -31,8 +31,8 @@ resilience4j:
       testService:
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
-        maxAttempts: 2
-        waitDuration: 3s
+        maxAttempts: 3
+        waitDuration: 1s
         retryExceptionPredicate: com.habeebcycle.demo.resilientservice.http.exception.RecordFailurePredicate
 
   # Circuitbreaker
