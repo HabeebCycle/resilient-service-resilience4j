@@ -1,0 +1,50 @@
+server:
+  port: 55550
+  shutdown: GRACEFUL
+
+api:
+  client:
+    baseUrl: http://localhost:54500
+    connectTimeout: 5000
+    readTimeout: 5000
+    writeTimeout: 5000
+    maxInMemorySize: 67108864
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  info:
+    git:
+      mode: full
+
+# Resilience4J properties
+# #Enable circuit breaker health status
+management.health.circuitbreakers.enabled: true
+resilience4j:
+  # Retry
+  retry:
+    retryAspectOrder: 2
+    instances:
+      testService:
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        maxAttempts: 2
+        waitDuration: 3s
+        retryExceptionPredicate: com.habeebcycle.demo.resilientservice.http.exception.RecordFailurePredicate
+
+  # Circuitbreaker
+  circuitbreaker:
+    circuitBreakerAspectOrder: 1
+    instances:
+      testService:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 100
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordFailurePredicate: com.habeebcycle.demo.resilientservice.http.exception.RecordFailurePredicate

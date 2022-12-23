@@ -1,0 +1,50 @@
+server:
+  port: 8095
+  shutdown: GRACEFUL
+
+api:
+  client:
+    baseUrl: https://jsonplaceholder.typicode.com
+    connectTimeout: 5000
+    readTimeout: 5000
+    writeTimeout: 5000
+    maxInMemorySize: 67108864
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  info:
+    git:
+      mode: full
+
+# Resilience4J properties
+# #Enable circuit breaker health status
+management.health.circuitbreakers.enabled: true
+resilience4j:
+  # Retry
+  retry:
+    retryAspectOrder: 2
+    instances:
+      testService:
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        maxAttempts: 3
+        waitDuration: 5s
+        retryExceptionPredicate: com.habeebcycle.demo.resilientservice.http.exception.RecordFailurePredicate
+
+  # Circuitbreaker
+  circuitbreaker:
+    circuitBreakerAspectOrder: 1
+    instances:
+      testService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 4
+        failureRateThreshold: 50
+        waitDurationInOpenState: 60s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordFailurePredicate: com.habeebcycle.demo.resilientservice.http.exception.RecordFailurePredicate
