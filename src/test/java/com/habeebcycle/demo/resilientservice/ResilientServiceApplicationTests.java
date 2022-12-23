@@ -139,7 +139,7 @@ class ResilientServiceApplicationTests {
 				.jsonPath("$.timestamp").isNotEmpty();
 
 		//Wait at least 10 seconds for the circuit to transition to half open state
-		await().atMost(Duration.ofMillis(20000)).until(() -> circuitBreaker.getState().equals(CircuitBreaker.State.HALF_OPEN));
+		await().atMost(Duration.ofMillis(10000)).until(() -> circuitBreaker.getState().equals(CircuitBreaker.State.HALF_OPEN));
 		assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.HALF_OPEN);
 
 		testClient.get().uri("/services/posts/6")
