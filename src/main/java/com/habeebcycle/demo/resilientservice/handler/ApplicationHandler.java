@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
@@ -43,7 +42,7 @@ public class ApplicationHandler {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleErrorResponse)
                 .bodyToMono(String.class)
-                .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+                .transformDeferred(CircuitBreakerOperator.of(circuitBreaker)) // ORDER - If written below, circuit breaker will record a single failure after the max-retry
                 .transformDeferred(RetryOperator.of(retry)) // ORDER - If above, retry will complete before a failure is recorded by the circuit breaker
                 .doOnError(CallNotPermittedException.class::isInstance, throwable -> {
                     LOG.error("Circuit Breaker is in [{}]... Providing fallback response without calling the API", circuitBreaker.getState());

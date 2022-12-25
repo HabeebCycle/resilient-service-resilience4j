@@ -1,8 +1,10 @@
 package com.habeebcycle.demo.resilientservice.config;
 
 import com.habeebcycle.demo.resilientservice.http.exception.CustomResponseStatusException;
+import com.habeebcycle.demo.resilientservice.http.exception.RecordFailurePredicate;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.core.IntervalFunction;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 import io.netty.channel.ConnectTimeoutException;
@@ -38,6 +40,7 @@ public class ResilienceConfig {
                 .waitDurationInOpenState(Duration.ofMillis(10000))
                 .permittedNumberOfCallsInHalfOpenState(2)
                 .automaticTransitionFromOpenToHalfOpenEnabled(true)
+                .recordException(new RecordFailurePredicate())
                 //.recordException(e -> e instanceof CustomResponseStatusException exception
                         //&& exception.getStatus() == INTERNAL_SERVER_ERROR)
                 //.recordExceptions(IOException.class, TimeoutException.class)
@@ -51,8 +54,9 @@ public class ResilienceConfig {
     public RetryRegistry configureRetryRegistry() {
         final RetryConfig retryConfig = RetryConfig.custom()
                 .maxAttempts(3)
-                .waitDuration(Duration.ofMillis(5000))
-                //.intervalFunction(IntervalFunction.ofExponentialBackoff(IntervalFunction.DEFAULT_INITIAL_INTERVAL, 2))
+                //.waitDuration(Duration.ofMillis(5000)) //Either this OR
+                .intervalFunction(IntervalFunction.ofExponentialBackoff(IntervalFunction.DEFAULT_INITIAL_INTERVAL, 2)) // OR this
+                .retryOnException(new RecordFailurePredicate())
                 .build();
 
         return RetryRegistry.of(Map.of(RETRY_CONFIG_NAME, retryConfig));

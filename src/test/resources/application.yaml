@@ -4,7 +4,7 @@ server:
 
 api:
   client:
-    baseUrl: http://localhost:54500
+    baseUrl: http://localhost:54500 #Port defined here should be used with mockWebServer
     connectTimeout: 5000
     readTimeout: 5000
     writeTimeout: 5000

@@ -37,7 +37,7 @@ public class ApplicationWebClient {
                                 @Value("${api.client.connectTimeout}") int connectTimeout,
                                 @Value("${api.client.readTimeout}") int readTimeout,
                                 @Value("${api.client.writeTimeout}") int writeTimeout,
-                                @Value("${api.client.maxInMemorySize:2048}") int maxInMemorySize) {
+                                @Value("${api.client.maxInMemorySize:33777216}") int maxInMemorySize) {
         this.serverBaseUrl = serverBaseUrl;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;

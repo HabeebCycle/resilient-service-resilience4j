@@ -43,7 +43,7 @@ class ResilientServiceApplicationTests {
 		this.retry = retryRegistry.retry(RETRY_CONFIG_NAME);
 
 		this.mockBackEnd = new MockWebServer();
-		this.mockBackEnd.start(54500);
+		this.mockBackEnd.start(54500); //Port defined on the application.yaml file
 	}
 
 	@AfterEach
@@ -103,7 +103,7 @@ class ResilientServiceApplicationTests {
 	}
 
 	@Test
-	void shouldCRetryAndFailAndBreakCloseTheCircuitTest() {
+	void shouldCRetryAndFailAndBreakAndCloseTheCircuitTest() {
 		testClient = WebTestClient
 				.bindToApplicationContext(context)
 				.configureClient().responseTimeout(Duration.ofSeconds(60))
